@@ -1,0 +1,58 @@
+#SETUP 
+raw_reads: test_data
+working_directory: testar_lite
+threads: 6
+
+# choose input between: raw, cutadapt, umi_tools_extract, umi_tools_dedup,
+# bowtie2_aligned, bowtie2_unaligned, star_aligned, star_unaligned...
+umi_tools_extract:
+- input: raw
+- mode: extract
+- extract-method: regex
+- bc-pattern: (?P<discard_1>.*)(?P<umi_1>[ACT]{8}CA)
+
+cutadapt:
+- input: umi_tools_extract
+- adapter: TGGAATTCTCGGGTGCCAAGG
+- minimum-length: 18
+- maximum-length: 41
+- error-rate: 0.1
+- overlap: 1
+
+# enter folder and prefix of index name, e.g. index/human_genome/hg38
+bowtie2:
+- input: cutadapt
+- k: 100
+- end-to-end: very-sensitive
+- x: indices/bowtie2/GRCh38/GRCh38_noalt_as
+
+umi_tools_dedup:
+- input: bowtie2_aligned
+- mode: dedup
+- method: unique
+
+
+# enter the path to the annotation file (a), GTF or GFF
+featureCounts:
+- input: umi_tools_dedup
+- t: miRNA
+- g: ID
+- f:
+- O:
+- a: annotation/mirbase_hsa.gff
+
+# create csv with only samples and empty condition column. User should be able to enter wich row number should be what:
+# e.g. 1-10 = cancer. 11-20 = normal, and the program should then insert that information
+DESeq2:
+- input: featureCounts
+- coldata:
+    - sick: 1 - 1
+    - normal: 2 - 3
+
+order:
+- umi_tools_extract
+- cutadapt
+- bowtie2
+- umi_tools_dedup
+- featureCounts
+#- DESeq2
