@@ -23,7 +23,7 @@ dds <- DESeq(dds)
 results <- results(dds, alpha=0.05)
 
 write.csv(as.data.frame(results), 
-          file=args[3])
+          file = args[3])
 
 
 
