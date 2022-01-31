@@ -34,7 +34,8 @@ class ProgramCommando:
                             'cutadapt': self.folders.cutadapt_processed,
                             'bowtie2_aligned': self.folders.bowtie2_processed_aligned,
                             'bowtie2_unaligned': self.folders.bowtie2_processed_unaligned,
-                            'featureCounts': self.folders.feature_counts}
+                            'featureCounts': self.folders.feature_counts,
+                            'fastp': self.folders.fastp_processed}
         return input_folder_dict[folder]
     
     def extract_parameters(self):
@@ -304,4 +305,45 @@ class FeatureCountsCommando(ProgramCommando):
         command = self.create_command()
         subprocess.call(command)
         self.clean_matrix()
+ 
+
+class FastpCommando(ProgramCommando):
+    def __init__(self, config_file):
+        super().__init__(config_file)
+        self.program = 'fastp'
+       
+    def extract_parameters(self):
+        command = [self.program, '--thread', self.threads]
+        for params in self.config[self.program]:
+            for key, value in params.items():
+                if key == 'input':
+                    self.input_files = self.reads_in(value)
+                elif len(key) == 1:
+                    command.append(f'-{key}')
+                    command.append(str(value))
+                else:
+                    command.append(f'--{key}')
+                    command.append(str(value))             
+        return command
+      
+    def create_command(self):
+        # to get the attribute self.input_files, self.extract_parameters needs to be run
+        self.extract_parameters()
+        list_of_commands = []
+        for read in self.input_files:
+            command = self.extract_parameters()
+            read_out = self.new_out_file(read, self.folders.fastp_processed)
+            log_file = self.folders.fastp_log / f'{read.stem}.json'
+            command.append('-i')
+            command.append(read)
+            command.append('-o')
+            command.append(read_out)
+            command.append('--json')
+            command.append(log_file)
+            list_of_commands.append(command)
+        return list_of_commands
             
+    def run_command(self):
+        commands = create_command()
+        for command in commands:
+            subprocess.call(command)

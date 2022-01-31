@@ -29,6 +29,9 @@ class CreateFolders:
         #cutadapt
         self.cutadapt_processed = Path(self.working_directory, 'cutadapt', 'processed')
         self.cutadapt_log = Path(self.working_directory, 'cutadapt', 'log')
+        #fastp
+        self.fastp_processed = Path(self.working_directory, 'fastp', 'processed')
+        self.fastp_log = Path(self.working_directory, 'fastp', 'log')
         #bowtie2
         self.bowtie2_processed_aligned = Path(self.working_directory, 'bowtie2', 'processed', 'aligned')
         self.bowtie2_processed_unaligned = Path(self.working_directory, 'bowtie2', 'processed', 'unaligned')
@@ -41,7 +44,8 @@ class CreateFolders:
         self.__directory_list = [self.umi_tools_processed, self.umi_tools_log, self.umi_tools_processed_dedup, 
                                  self.umi_tools_log_dedup, self.cutadapt_processed, self.cutadapt_log, 
                                 self.bowtie2_processed_aligned, self.bowtie2_processed_unaligned,
-                                self.bowtie2_log, self.results, self.feature_counts]
+                                self.bowtie2_log, self.results, self.feature_counts, self.fastp_processed,
+                                self.fastp_log]
                 
     def make_directories(self):
         for i in self.__directory_list:

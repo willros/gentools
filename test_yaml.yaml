@@ -19,6 +19,10 @@ cutadapt:
 - error-rate: 0.1
 - overlap: 1
 
+fastp:
+- input: raw
+- adapter_sequence: TGGAATTCTCGGGTGCCAAGG
+
 # enter folder and prefix of index name, e.g. index/human_genome/hg38
 bowtie2:
 - input: cutadapt
