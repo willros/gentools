@@ -2,7 +2,7 @@ import click
 from .default_config import default_config
 from .config import CreateFolders
 from .preprocessing import UmitoolsExtractGraphs, CutadaptGraphs, UmitoolsDedupGraphs, Bowtie2Graphs, FeatureCountsGraphs
-from .programs import UmitoolsExtractCommando, UmitoolsDedupCommando, CutadaptCommando, Bowtie2Commando, FeatureCountsCommando
+from .programs import UmitoolsExtractCommando, UmitoolsDedupCommando, CutadaptCommando, Bowtie2Commando, FeatureCountsCommando, FastpCommando
 from .main import GenTools
 from .differential_expression import DifferentialExpression
 
@@ -184,7 +184,19 @@ def featurecounts_run(config_file):
     click.echo(f'Starting to run {tool.program}')
     tool.run_command()
     click.echo(f'{tool.program} done!')
- 
+    
+    
+### fastp
+@cli.command()
+@click.argument('config_file')
+def cutadapt_run(config_file):
+    '''Runs fastp only with the input files specified in the config file.'''
+    
+    tool = FastpCommando(config_file)
+    
+    click.echo(f'Starting to run {tool.program}')
+    tool.run_command()
+    click.echo(f'{tool.program} done!')
 
 ### DESeq2
 
