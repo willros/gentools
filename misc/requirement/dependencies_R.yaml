@@ -1,0 +1,9 @@
+conda:
+ - r-base
+ - r-tidyverse
+
+r-studio:
+ - DESeq2
+ - tximport
+ - janitor
+ 

@@ -48,10 +48,3 @@ class CreateFolders:
             i.mkdir(exist_ok=True, parents=True)
       
     
-# function that creates default config file. FIX THIS 
-def create_default_config(work_dir):
-    path = Path(work_dir, 'gentool_config.yaml')
-    content = '### test comment\nraw_reads: test_data\nworking_directory: testar_lite\ngenomes: ../scripts/genomes\n\numi_tools_extract:\n- mode: extract\n- extract-method: regex\n- bc-pattern: (?P<discard_1>.*)(?P<umi_1>[ACT]{8}CA)\n\ncutadapt:\n- adapter: TGGAATTCTCGGGTGCCAAGG\n- minimum-length: 18\n- maximum-length: 41\n- error-rate: 0.1\n- overlap: 1\n\nbowtie2:\n- k: 100\n- local: very-sensitive-local\n- x: indices/bowtie2/rna_central/rna_central\n\numi_tools_dedup:\n- mode: dedup\n- method: unique\n\n\norder:\n- cutadapt\n- umi_tools_extract\n- bowtie2'
-    
-    with open(path, 'w') as file:
-        file.write(content)

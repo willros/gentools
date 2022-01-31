@@ -1,0 +1,107 @@
+---
+title: "DESeq2_test on salmon alignment to gencode.transcriptome"
+author: "William Rosenbaum"
+date: '2021-11-03'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Need to set up variables so that this can be automated by snakemake
+
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(tximport)
+library(janitor)
+
+```
+#Reading in data 
+```{r}
+
+sra_table <- read_csv('../sra_table_new.txt')
+sra_table <- sra_table %>%
+  clean_names() %>%
+  select(run, cell_type) %>%
+  mutate(cell_type = gsub(' ', '_', cell_type)) %>%
+  mutate(cell_type = as_factor(cell_type))
+  
+tx2gene_file <- read_csv('../tx2gene.csv', col_names = c('transcript', 'gene'))
+
+salmon_files <- list.files(path = '../snakemake_salmon/transcriptome/', 
+                         pattern = 'quant.sf',
+                         recursive = TRUE,
+                         full.names = TRUE)
+
+names(salmon_files) <- sra_table %>% pull(run)
+
+
+count_data <- tximport(files = salmon_files,
+                       type = 'salmon',
+                       tx2gene = tx2gene_file,
+                       ignoreTxVersion = TRUE,
+                       ignoreAfterBar = TRUE)
+
+
+```
+
+# Looking at the data 
+```{r}
+deseq_data <- DESeqDataSetFromTximport(txi = count_data,
+                                       colData = sra_table,
+                                       design = ~cell_type)
+
+
+deseq_data = estimateSizeFactors(deseq_data)
+
+#stabilize variance (like making it log normal for PCA, also takes cares of the heteroschedacicity of the data)
+vst = varianceStabilizingTransformation(deseq_data)
+
+#looking at the data
+hist(log(counts(deseq_data)))
+boxplot(assay(vst))
+
+#PCA
+plotPCA(vst, intgroup='cell_type')
+
+```
+The separation is most likely due to different batches and so on? 
+```{r}
+deseq_data = DESeq(deseq_data)
+
+results_table <- results(deseq_data)
+
+summary(results_table)
+
+```
+```{r}
+results_tibble <- as_tibble(results_table, rownames = 'genes')
+
+results_tibble <- results_tibble %>%
+  drop_na() %>%
+  clean_names() %>%
+  filter(base_mean > 0,
+         padj < 0.05,
+         abs(log2fold_change) > 1) %>%
+  arrange(log2fold_change)
+
+
+results_tibble
+```
+```{r}
+
+plotCounts(deseq_data, gene='ENSG00000157514', intgroup = 'cell_type')
+```
+
+
+
+
+
+
+
+
+
+
+
