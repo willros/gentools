@@ -11,13 +11,15 @@ umi_tools_extract:
 - extract-method: regex
 - bc-pattern: (?P<discard_1>.*)(?P<umi_1>[ACT]{8}CA)
 
+# Y for yes N for no
 cutadapt:
-- input: umi_tools_extract
+- input: raw
 - adapter: TGGAATTCTCGGGTGCCAAGG
 - minimum-length: 18
 - maximum-length: 41
 - error-rate: 0.1
 - overlap: 1
+- trimmed_only?: N
 
 fastp:
 - input: raw
@@ -27,7 +29,7 @@ fastp:
 bowtie2:
 - input: cutadapt
 - k: 100
-- end-to-end: very-sensitive
+- local: very-sensitive-local
 - x: indices/bowtie2/GRCh38/GRCh38_noalt_as
 
 umi_tools_dedup:

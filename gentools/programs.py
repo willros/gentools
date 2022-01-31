@@ -59,6 +59,9 @@ class CutadaptCommando(ProgramCommando):
             for key, value in params.items():
                 if key == 'input':
                     self.input_files = self.reads_in(value)
+                elif key == 'trimmed_only?':
+                    if value == 'Y':
+                        command.append('--trimmed-only')
                 elif len(key) == 1:
                     command.append(f'-{key}')
                     command.append(str(value))
