@@ -189,7 +189,7 @@ def featurecounts_run(config_file):
 ### fastp
 @cli.command()
 @click.argument('config_file')
-def cutadapt_run(config_file):
+def fastp_run(config_file):
     '''Runs fastp only with the input files specified in the config file.'''
     
     tool = FastpCommando(config_file)

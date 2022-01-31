@@ -8,7 +8,6 @@ gentools/differential_expression.py
 gentools/main.py
 gentools/preprocessing.py
 gentools/programs.py
-gentools/utils.py
 gentools.egg-info/PKG-INFO
 gentools.egg-info/SOURCES.txt
 gentools.egg-info/dependency_links.txt
