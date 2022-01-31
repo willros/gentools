@@ -344,6 +344,6 @@ class FastpCommando(ProgramCommando):
         return list_of_commands
             
     def run_command(self):
-        commands = create_command()
+        commands = self.create_command()
         for command in commands:
             subprocess.call(command)
