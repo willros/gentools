@@ -5,7 +5,6 @@ from .config import Configfile, CreateFolders
 import pandas as pd
 import os
 import re
-from datar.all import select, contains
 
 #parallellization for umi_tools
 from joblib import Parallel, delayed
@@ -290,15 +289,20 @@ class FeatureCountsCommando(ProgramCommando):
         return command
     
     def clean_matrix(self):
-        # read in data 
-        counts_table = pd.read_csv(self.count_matrix, delimiter='\t', skiprows=1)
-        # filter for correct columns
-        counts_table = counts_table >> select(contains('Geneid') | contains('bam'))
-        # rename the columns
-        raw_names = ['gene_id']
-        samples = sorted([file.stem for file in self.folders.raw_reads.iterdir() if file.is_file()])
-        raw_names.extend(samples) 
-        counts_table.columns = raw_names
+        
+        #remove unwated columns
+        counts_table = pd.read_csv('featurecounts-out', delimiter='\t', skiprows=1)
+        counts_table.drop(columns=['Chr','Start', 'End', 'Strand', 'Length'], inplace=True)
+        
+        #change the name of the sample colums
+        names = counts_table.columns.to_list()[1:]
+        pattern = re.compile(r'aligned\/(.*?)\.')
+        new_names = ['gene_id']
+        for name in names:
+            find = re.findall(pattern, name)
+            new_name = find[0].split('_')[0]
+            new_names.append(new_name)
+        counts_table.columns = new_names
         # save and remove original file
         out_file = self.folders.feature_counts / 'count_matrix.csv'
         counts_table.to_csv(out_file, index=False)

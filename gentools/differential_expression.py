@@ -13,9 +13,11 @@ class DifferentialExpression:
         self.program = 'DESeq2'
     
     def _create_df(self):
-        samples = sorted([file.stem for file in self.folders.raw_reads.iterdir() if file.is_file()])
-        #coldata = pd.DataFrame({'samples': samples})
-        coldata = pd.DataFrame({'samples': samples, 'condition': 'NA'})
+        
+        counts = self.folders.feature_counts / 'count_matrix.csv'
+        df = pd.read_csv(counts)
+        samples = df.columns.to_list()[1:]
+        coldata = pd.DataFrame({'samples':samples, 'condition': 'NA'})
         return coldata
 
     def _create_coldata(self):
