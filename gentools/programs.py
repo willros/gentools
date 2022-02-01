@@ -268,7 +268,7 @@ class FeatureCountsCommando(ProgramCommando):
             for key, value in params.items():
                 if key == 'input':
                     self.input_files = self.reads_in(value, suffix='.bam')
-                elif key in ['O', 'f']:
+                elif key in ['O', 'f', 'M']:
                     command.append(f'-{key}')
                 elif len(key) == 1:
                     command.append(f'-{key}')

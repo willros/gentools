@@ -1,7 +1,7 @@
 #SETUP 
 raw_reads: test_data
-working_directory: testar_lite
-threads: 6
+working_directory: ../smallTseq/nya_gentools
+threads: 3
 
 # choose input between: raw, cutadapt, umi_tools_extract, umi_tools_dedup,
 # bowtie2_aligned, bowtie2_unaligned, star_aligned, star_unaligned...
@@ -40,12 +40,10 @@ umi_tools_dedup:
 
 # enter the path to the annotation file (a), GTF or GFF
 featureCounts:
-- input: umi_tools_dedup
-- t: miRNA
-- g: ID
-- f:
+- input: cutadapt
 - O:
-- a: annotation/mirbase_hsa.gff
+- M:
+- a: gencode.v39.basic.annotation.gff3.gz
 
 # create csv with only samples and empty condition column. User should be able to enter wich row number should be what:
 # e.g. 1-10 = cancer. 11-20 = normal, and the program should then insert that information
