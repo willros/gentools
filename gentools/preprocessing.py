@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 from .config import Configfile, CreateFolders
 from pathlib import Path
- 
+from plotnine import *
+
 class ProgramGraphs:
     '''Super class for making graphs and so on'''
     def __init__(self, config_file):
@@ -124,3 +125,50 @@ class FeatureCountsGraphs(ProgramGraphs):
         pd.DataFrame({'sample':names, 'mapped_reads': pre, 'assigned_reads': assigned}).to_csv(csv_file, index=False)
         
         return pre_processing, post_processing
+
+    
+##### functions
+############# The datar functions creates probkems. Need to figure out a way to use plain pandas instead... 
+############# used the 'reorder(x, y)' inbuilt in plotnine, which works. Perhaps should use a 'whitelist' of which
+# csv the plotfunction takes instead of the blacklist 
+
+def plot_col_all(config: str) -> None:
+    '''Creates a facet plot over all samples and the relationship between reads after each processing step'''
+    
+    folder = CreateFolders(config)
+    unwanted_files = ['coldata', 'de_genes', 'concatenated_processing_file']
+    file_list = sorted([file for file in folder.results.iterdir() if file.suffix == '.csv' and file.stem not in unwanted_files])
+    
+    df_list = [pd.read_csv(file).assign(program=file.stem) for file in file_list]
+    total_df = pd.concat(df_list)
+    total_df['name'] = [x.split('_')[0] for x in total_df['name']]
+    
+    raw = (total_df
+    .groupby('name')
+    .max()
+    .reset_index()
+    .assign(program='raw')
+    .drop('post_filtering', axis=1)
+    .rename({'pre_filtering': 'value'}, axis=1))
+
+    total_df = (total_df
+    .drop('pre_filtering', axis=1)
+    .rename({'post_filtering':'value'}, axis=1))
+
+    plot = pd.concat([total_df, raw], ignore_index=True)
+    
+    fig = (plot >> 
+       ggplot(aes(x='reorder(program, value)', y='value', fill='program')) +
+       geom_col() + facet_wrap('name') + 
+       coord_flip() +
+       theme_seaborn() +
+       theme(axis_text_x = element_text(angle = 90)) +
+       labs(x='', 
+           y='Number of reads',
+           title='Reads filtered by each program'))
+    
+    fig_save_name = folder.results / 'processed_files_all.pdf'
+    plot_save_name = folder.results / 'concatenated_processing_file.csv'
+    plot.to_csv(plot_save_name, index=False)
+    fig.save(fig_save_name)
+    

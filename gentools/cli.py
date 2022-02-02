@@ -1,7 +1,7 @@
 import click
 from .default_config import default_config
 from .config import CreateFolders
-from .preprocessing import UmitoolsExtractGraphs, CutadaptGraphs, UmitoolsDedupGraphs, Bowtie2Graphs, FeatureCountsGraphs
+from .preprocessing import UmitoolsExtractGraphs, CutadaptGraphs, UmitoolsDedupGraphs, Bowtie2Graphs, FeatureCountsGraphs, plot_col_all
 from .programs import UmitoolsExtractCommando, UmitoolsDedupCommando, CutadaptCommando, Bowtie2Commando, FeatureCountsCommando, FastpCommando
 from .main import GenTools
 from .differential_expression import DifferentialExpression
@@ -210,7 +210,18 @@ def deseq2_run(config_file):
     click.echo(f'Starting to run {tool.program}')
     tool.run_command()
     click.echo(f'{tool.program} done!')
+
+
+## plotting everything after preprocessing 
+
+@cli.command()
+@click.argument('config_file')
+def plot_preprocessing(config_file):
+    '''Creates a plot with ratios of filtered reads after each preprocessing program.'''
     
+    click.echo('Creates plot')
+    plot_col_all(config_file)
+    click.echo(f'Plot done! look for plot in results folder')
                
 if __name__ == '__main__':
     cli()
