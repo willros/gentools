@@ -158,14 +158,17 @@ def plot_col_all(config: str) -> None:
     plot = pd.concat([total_df, raw], ignore_index=True)
     
     fig = (plot >> 
-       ggplot(aes(x='reorder(program, value)', y='value', fill='program')) +
-       geom_col() + facet_wrap('name') + 
+       ggplot(aes('reorder(program, value)', 'value', fill='program')) +
+       geom_col() + facet_wrap('name', scales='free') + 
        coord_flip() +
        theme_seaborn() +
-       theme(axis_text_x = element_text(angle = 90)) +
+       theme(axis_text_x=element_text(angle=90)) +
        labs(x='', 
            y='Number of reads',
-           title='Reads filtered by each program'))
+           title='Reads filtered by each program') +
+       theme(legend_title=element_blank(),
+            axis_text_y=element_blank()))
+
     
     fig_save_name = folder.results / 'processed_files_all.pdf'
     plot_save_name = folder.results / 'concatenated_processing_file.csv'
