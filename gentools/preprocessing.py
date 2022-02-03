@@ -118,11 +118,11 @@ class FeatureCountsGraphs(ProgramGraphs):
 
         pre_processing = sum(pre)
         post_processing = sum(assigned)   
-        pd.DataFrame({'sample':names, 'mapped_reads': pre, 'assigned_reads': assigned})
+        #pd.DataFrame({'sample':names, 'mapped_reads': pre, 'assigned_reads': assigned})
 
         name = f'{self.program}.csv'
         csv_file = Path(self.folders.results, name)
-        pd.DataFrame({'sample':names, 'mapped_reads': pre, 'assigned_reads': assigned}).to_csv(csv_file, index=False)
+        pd.DataFrame({'name':names, 'pre_filtering': pre, 'post_filtering': assigned}).to_csv(csv_file, index=False)
         
         return pre_processing, post_processing
 
@@ -136,7 +136,7 @@ def plot_col_all(config: str) -> None:
     '''Creates a facet plot over all samples and the relationship between reads after each processing step'''
     
     folder = CreateFolders(config)
-    unwanted_files = ['coldata', 'de_genes', 'concatenated_processing_file']
+    unwanted_files = ['coldata', 'de_genes', 'concatenated_processing_file', 'featureCounts']
     file_list = sorted([file for file in folder.results.iterdir() if file.suffix == '.csv' and file.stem not in unwanted_files])
     
     df_list = [pd.read_csv(file).assign(program=file.stem) for file in file_list]
