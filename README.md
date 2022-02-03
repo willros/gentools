@@ -21,6 +21,14 @@ The default settings is set to be optimal for miRNA analysis.
 Install gentools via pip:
 ```pip install gentools```
 
+### Download of indicies and GFF files
+
+Download the following prebuilt index from bowtie2:
+https://genome-idx.s3.amazonaws.com/bt/GRCh38_noalt_as.zip
+
+Download the following GFF file from gencode: 
+https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/gencode.v39.annotation.gff3.gz
+
 ### Usage:
 gentools relies on a config file. A default config file can be generated through:
 ```gentools config <path_of_folder_to_put_file>```
@@ -31,7 +39,7 @@ Edit the file with approppriate path to indexes and so on. Specify input files t
 
 * numpy
 * pandas
-* datar
+* plotnine
 * click
 
 

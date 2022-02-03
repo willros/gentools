@@ -291,7 +291,7 @@ class FeatureCountsCommando(ProgramCommando):
     def clean_matrix(self):
         
         #remove unwated columns
-        counts_table = pd.read_csv('featurecounts-out', delimiter='\t', skiprows=1)
+        counts_table = pd.read_csv(self.count_matrix, delimiter='\t', skiprows=1)
         counts_table.drop(columns=['Chr','Start', 'End', 'Strand', 'Length'], inplace=True)
         
         #change the name of the sample colums
