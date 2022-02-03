@@ -72,8 +72,8 @@ class CutadaptGraphs(ProgramGraphs):
     def __init__(self, config_file):
         super().__init__(config_file)
         self.program = 'cutadapt'
-        self.pattern_pre = re.compile(r'Total reads processed: +(\d+,\d+)')
-        self.pattern_post = re.compile(r'Reads written \(passing filters\): +(\d+,\d+)')
+        self.pattern_pre = re.compile(r'Total reads processed: +([\d,]+)')
+        self.pattern_post = re.compile(r'Reads written \(passing filters\): +([\d,]+)')
         
         
 class Bowtie2Graphs(ProgramGraphs):
