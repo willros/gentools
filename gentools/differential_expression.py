@@ -16,7 +16,7 @@ class DifferentialExpression:
         
         counts = self.folders.feature_counts / 'count_matrix.csv'
         df = pd.read_csv(counts)
-        samples = df.columns.to_list()[1:]
+        samples = df.columns.to_list()[4:]
         coldata = pd.DataFrame({'samples':samples, 'condition': 'NA'})
         return coldata
 

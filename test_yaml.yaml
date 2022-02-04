@@ -40,7 +40,7 @@ umi_tools_dedup:
 
 # enter the path to the annotation file (a), GTF or GFF
 featureCounts:
-- input: cutadapt
+- input: raw
 - O:
 - M:
 - a: gencode.v39.basic.annotation.gff3.gz

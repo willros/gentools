@@ -5,8 +5,12 @@ library(DESeq2)
 
 args <- commandArgs(TRUE)
 
-feature_counts <- read_csv(args[1]) %>%
-  column_to_rownames(var='gene_id')
+feature_counts <- read_csv(args[1]) 
+
+feature_counts <- feature_counts %>%
+  column_to_rownames(var='gene_id') %>%
+  select(-length, -gene_name, -gene_type)
+
 
 coldata <- read_csv(args[2]) %>%
   column_to_rownames(var='samples') %>%

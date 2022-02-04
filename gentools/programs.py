@@ -281,6 +281,8 @@ class FeatureCountsCommando(ProgramCommando):
         # to get the attribute self.input_files, self.extract_parameters needs to be run
         self.extract_parameters()
         command = self.extract_parameters()
+        command.append('--extraAttributes')
+        command.append('gene_name,gene_type')
         self.count_matrix = Path(self.folders.feature_counts, 'count_matrix.txt')
         command.append('-o')
         command.append(self.count_matrix)
@@ -292,12 +294,12 @@ class FeatureCountsCommando(ProgramCommando):
         
         #remove unwated columns
         counts_table = pd.read_csv(self.count_matrix, delimiter='\t', skiprows=1)
-        counts_table.drop(columns=['Chr','Start', 'End', 'Strand', 'Length'], inplace=True)
+        counts_table.drop(columns=['Chr','Start', 'End', 'Strand'], inplace=True)
         
-        #change the name of the sample colums
-        names = counts_table.columns.to_list()[1:]
+        #change the name of the sample colums, start with 5 entrance since the first 4 are gene_id, gene_name etc.
+        names = counts_table.columns.to_list()[4:]
         pattern = re.compile(r'aligned\/(.*?)\.')
-        new_names = ['gene_id']
+        new_names = ['gene_id', 'length', 'gene_name', 'gene_type']
         for name in names:
             find = re.findall(pattern, name)
             new_name = find[0].split('_')[0]
