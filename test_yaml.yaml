@@ -1,19 +1,26 @@
-#SETUP 
-raw_reads: test_data
-working_directory: ../smallTseq/nya_gentools
-threads: 3
+### Setup ###
 
-# choose input between: raw, cutadapt, umi_tools_extract, umi_tools_dedup,
-# bowtie2_aligned, bowtie2_unaligned, star_aligned, star_unaligned...
+# Enter the directory containing the raw reads and a directory name that you want to use as a working directory
+
+raw_reads: data_smallseq_10_files
+working_directory: gentools_smallseq_10_files
+threads: 6
+
+### Preprocessing ###  
+
+# The default configuration is optimized to work with miRNA data. Especially libraries prepared with the 
+# Small-seq protocol. 
+
 umi_tools_extract:
 - input: raw
 - mode: extract
 - extract-method: regex
 - bc-pattern: (?P<discard_1>.*)(?P<umi_1>[ACT]{8}CA)
 
-# Y for yes N for no
+# For trimmed only enter Y for yes and N for no if you want cutadapt to only keep reads that have been filtered.
+
 cutadapt:
-- input: raw
+- input: umi_tools_extract
 - adapter: TGGAATTCTCGGGTGCCAAGG
 - minimum-length: 18
 - maximum-length: 41
@@ -21,16 +28,14 @@ cutadapt:
 - overlap: 1
 - trimmed_only?: N
 
-fastp:
-- input: raw
-- adapter_sequence: TGGAATTCTCGGGTGCCAAGG
-
 # enter folder and prefix of index name, e.g. index/human_genome/hg38
+
 bowtie2:
 - input: cutadapt
 - k: 100
 - local: very-sensitive-local
-- x: indices/bowtie2/GRCh38/GRCh38_noalt_as
+- x: /bowtie2_index/genome/GRCh38
+
 
 umi_tools_dedup:
 - input: bowtie2_aligned
@@ -39,19 +44,23 @@ umi_tools_dedup:
 
 
 # enter the path to the annotation file (a), GTF or GFF
-featureCounts:
-- input: raw
-- O:
-- M:
-- a: gencode.v39.basic.annotation.gff3.gz
 
-# create csv with only samples and empty condition column. User should be able to enter wich row number should be what:
-# e.g. 1-10 = cancer. 11-20 = normal, and the program should then insert that information
+featureCounts:
+- input: bowtie2_aligned
+- M:
+- O:
+- a: gencode.v39.annotation.gtf.gz
+
+# Enter the coldata for the two conditions of the dataset. For example, cancer: 1 - 10, normal: 11 - 20
+
 DESeq2:
 - input: featureCounts
 - coldata:
-    - sick: 1 - 1
-    - normal: 2 - 3
+    - cancer: 1 - 10
+    - normal: 11 - 20
+
+
+# Write the programs in the order that you want to run them in. This order will be run by the run-pipe command.
 
 order:
 - umi_tools_extract
@@ -59,4 +68,4 @@ order:
 - bowtie2
 - umi_tools_dedup
 - featureCounts
-#- DESeq2
+- DESeq2
