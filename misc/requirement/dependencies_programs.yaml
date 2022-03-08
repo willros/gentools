@@ -2,13 +2,13 @@ conda:
  - bowtie2
  - snakemake
  - samtools
- - bowtie=1.3.1
+# - bowtie=1.3.1
  - fastqc
  - subread
- - salmon
+# - salmon
  - fastp
 pip:
  - cutadapt
  - umi-tools
- - multiqc
- - datar
+# - multiqc
+# - datar

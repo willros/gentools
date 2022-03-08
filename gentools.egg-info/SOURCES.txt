@@ -6,7 +6,6 @@ gentools/config.py
 gentools/default_config.py
 gentools/differential_expression.py
 gentools/main.py
-gentools/plot_preprocessing.py
 gentools/preprocessing.py
 gentools/programs.py
 gentools.egg-info/PKG-INFO
